@@ -1,0 +1,61 @@
+diff --git a/dist/runtime/server/lib/oauth/oidc.d.ts b/dist/runtime/server/lib/oauth/oidc.d.ts
+index e3d09517dea157049ee4f0ed3ee0200f6c89c3c4..682e7c0505aab862d76ec746fc718c2e058bfe34 100644
+--- a/dist/runtime/server/lib/oauth/oidc.d.ts
++++ b/dist/runtime/server/lib/oauth/oidc.d.ts
+@@ -25,7 +25,7 @@ export interface OAuthOidcConfig {
+     /**
+      * OAuth Scope
+      *
+-     * @default ['openid']
++     * @default []
+      * @example ['openid', 'profile', 'email']
+      */
+     scope?: string[];
+@@ -193,12 +193,14 @@ interface AddressClaim {
+     country?: string;
+ }
+ interface OidcTokens {
+-    access_token: string;
+-    token_type: string;
+-    scope?: string;
+-    id_token?: string;
+-    refresh_token?: string;
+-    expires_in?: number;
++    data: {
++        apiKey: string;
++        tokenType: "ApiKey";
++        scope: string[];
++        appId: string;
++        userId: number;
++        expiresAt: string | null;
++    }
+ }
+ interface OIDCConfiguration {
+     authorization_endpoint: string;
+diff --git a/dist/runtime/server/lib/oauth/oidc.js b/dist/runtime/server/lib/oauth/oidc.js
+index f40937985ecda920b7679b1c22dc63c714f5661f..f93ad8a0f85d33bb2fb2c2c6c4c644ea14468edd 100644
+--- a/dist/runtime/server/lib/oauth/oidc.js
++++ b/dist/runtime/server/lib/oauth/oidc.js
+@@ -5,9 +5,7 @@ import { withQuery } from "ufo";
+ import { getOAuthRedirectURL, handleAccessTokenErrorResponse, handleInvalidState, handleMissingConfiguration, handlePkceVerifier, handleState, requestAccessToken, handleNonce, parseJwt } from "../utils.js";
+ export function defineOAuthOidcEventHandler({ config, onSuccess, onError }) {
+   return eventHandler(async (event) => {
+-    config = defu(config, useRuntimeConfig(event).oauth.oidc, {
+-      scope: ["openid"]
+-    });
++    config = defu(config, useRuntimeConfig(event).oauth.oidc);
+     const query = getQuery(event);
+     if (query.error) {
+       const error = createError({
+@@ -57,7 +55,10 @@ export function defineOAuthOidcEventHandler({ config, onSuccess, onError }) {
+       ...config.params?.token_endpoint
+     };
+     const tokens = await requestAccessToken(oidcConfig.token_endpoint, {
+-      body: tokenQuery
++      body: tokenQuery,
++      headers: {
++        'Content-Type': 'application/json'
++      }
+     });
+     if (tokens.error) {
+       return handleAccessTokenErrorResponse(event, "oidc", tokens, onError);

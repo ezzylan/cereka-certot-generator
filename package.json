@@ -8,18 +8,45 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
+    "lint": "oxlint && eslint",
+    "lint:fix": "oxlint --fix && eslint --fix",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "nuxt": "^4.3.1",
-    "vue": "^3.5.28",
-    "vue-router": "^4.6.4"
+    "@ai-sdk/google": "^3.0.43",
+    "@ai-sdk/vue": "^3.0.116",
+    "@libsql/client": "^0.17.0",
+    "@nuxt/eslint": "^1.15.2",
+    "@nuxt/image": "^2.0.0",
+    "@nuxt/ui": "^4.5.1",
+    "@nuxtjs/seo": "^3.4.0",
+    "@vueuse/nuxt": "^14.2.1",
+    "ai": "^6.0.116",
+    "drizzle-orm": "^0.45.1",
+    "motion-v": "^2.0.1",
+    "nuxt": "^4.4.2",
+    "nuxt-auth-utils": "^0.5.29",
+    "tailwindcss": "^4.2.1",
+    "vue": "^3.5.30",
+    "vue-router": "^5.0.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "oxfmt": "^0.33.0",
-    "oxlint": "^1.48.0"
+    "@iconify-json/logos": "^1.2.10",
+    "@iconify-json/lucide": "^1.2.98",
+    "@iconify-json/simple-icons": "^1.2.74",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^10.0.3",
+    "eslint-plugin-oxlint": "^1.56.0",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "typescript": "^5.9.3"
+  },
+  "patchedDependencies": {
+    "nuxt-auth-utils@0.5.29": "patches/nuxt-auth-utils@0.5.29.patch"
   }
 }
