@@ -24,6 +24,7 @@ export default defineOAuthOidcEventHandler({
         username: user.username,
       },
     });
+
     return sendRedirect(event, "/");
   },
   onError(event, error) {

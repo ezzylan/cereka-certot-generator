@@ -13,16 +13,18 @@ export default defineNuxtConfig({
   ],
   css: ["~/assets/css/main.css"],
   runtimeConfig: {
-    public: { baseUrl: "", daunBaseURL: "https://daun.me" },
+    public: { daunBaseURL: "https://daun.me" },
     oauth: {
       oidc: { clientId: "", clientSecret: "" },
     },
     turso: { databaseUrl: "", authToken: "" },
   },
   site: {
-    url: import.meta.baseURL,
+    url: "https://certotje.netlify.app",
     name: "CertotJe",
+    description: "Hasilkan certot anda sendiri dengan mudah.",
   },
+  sitemap: { zeroRuntime: true },
   app: {
     head: {
       link: [
