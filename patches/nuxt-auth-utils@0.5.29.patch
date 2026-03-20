@@ -1,3 +1,6 @@
+diff --git a/node_modules/nuxt-auth-utils/.bun-tag-274a314f222af593 b/.bun-tag-274a314f222af593
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/dist/runtime/server/lib/oauth/oidc.d.ts b/dist/runtime/server/lib/oauth/oidc.d.ts
 index e3d09517dea157049ee4f0ed3ee0200f6c89c3c4..682e7c0505aab862d76ec746fc718c2e058bfe34 100644
 --- a/dist/runtime/server/lib/oauth/oidc.d.ts
@@ -33,7 +36,7 @@ index e3d09517dea157049ee4f0ed3ee0200f6c89c3c4..682e7c0505aab862d76ec746fc718c2e
  interface OIDCConfiguration {
      authorization_endpoint: string;
 diff --git a/dist/runtime/server/lib/oauth/oidc.js b/dist/runtime/server/lib/oauth/oidc.js
-index f40937985ecda920b7679b1c22dc63c714f5661f..f93ad8a0f85d33bb2fb2c2c6c4c644ea14468edd 100644
+index f40937985ecda920b7679b1c22dc63c714f5661f..0224aed7e4b67072b3ee3b4ae2f76b18675e9ba0 100644
 --- a/dist/runtime/server/lib/oauth/oidc.js
 +++ b/dist/runtime/server/lib/oauth/oidc.js
 @@ -5,9 +5,7 @@ import { withQuery } from "ufo";
@@ -47,9 +50,11 @@ index f40937985ecda920b7679b1c22dc63c714f5661f..f93ad8a0f85d33bb2fb2c2c6c4c644ea
      const query = getQuery(event);
      if (query.error) {
        const error = createError({
-@@ -57,7 +55,10 @@ export function defineOAuthOidcEventHandler({ config, onSuccess, onError }) {
+@@ -56,8 +54,12 @@ export function defineOAuthOidcEventHandler({ config, onSuccess, onError }) {
+       code_verifier: verifier.code_verifier,
        ...config.params?.token_endpoint
      };
++    console.log("🚀 ~ defineOAuthOidcEventHandler ~ tokenQuery:", tokenQuery)
      const tokens = await requestAccessToken(oidcConfig.token_endpoint, {
 -      body: tokenQuery
 +      body: tokenQuery,
@@ -59,3 +64,26 @@ index f40937985ecda920b7679b1c22dc63c714f5661f..f93ad8a0f85d33bb2fb2c2c6c4c644ea
      });
      if (tokens.error) {
        return handleAccessTokenErrorResponse(event, "oidc", tokens, onError);
+diff --git a/dist/runtime/server/lib/utils.js b/dist/runtime/server/lib/utils.js
+index e7fa9466315bc628075434fa9c1d69e1c902bc88..4a7fa0eb312450909acd08d7978a47fbaf5dedcb 100644
+--- a/dist/runtime/server/lib/utils.js
++++ b/dist/runtime/server/lib/utils.js
+@@ -12,16 +12,12 @@ export function getOAuthRedirectURL(event) {
+   return `${requestURL.protocol}//${requestURL.host}${requestURL.pathname}`;
+ }
+ export async function requestAccessToken(url, options) {
+-  const headers = {
+-    "Content-Type": "application/x-www-form-urlencoded",
+-    ...options.headers
+-  };
+-  const body = headers["Content-Type"] === "application/x-www-form-urlencoded" ? new URLSearchParams(
++  const body = options.headers["Content-Type"] === "application/x-www-form-urlencoded" ? new URLSearchParams(
+     options.body || options.params || {}
+   ).toString() : options.body;
+   return $fetch(url, {
+     method: "POST",
+-    headers,
++    headers: options.headers,
+     body
+   }).catch((error) => {
+     if (error instanceof FetchError && error.status === 401) {
