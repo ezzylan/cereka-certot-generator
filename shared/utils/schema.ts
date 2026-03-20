@@ -14,3 +14,9 @@ export const inputSchema = z.object({
 });
 
 export type CertotInput = z.infer<typeof inputSchema>;
+
+export const authSchema = z.object({
+  username: z.string().nonempty(),
+});
+
+export type Auth = z.infer<typeof authSchema>;

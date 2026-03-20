@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { LazyCertotsSlideover } from "#components";
+import { LazyAuthFormModal, LazyCertotsSlideover } from "#components";
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const overlay = useOverlay();
+const authFormModal = overlay.create(LazyAuthFormModal);
 const certotsSlideover = overlay.create(LazyCertotsSlideover);
 
 const config = useRuntimeConfig();
@@ -56,9 +57,13 @@ const items = ref<DropdownMenuItem[]>([
   </UDropdownMenu>
 
   <UPopover v-else open :content="{ align: 'end' }">
-    <UButton :avatar="{ src: '/daun-logo.jpg' }" color="neutral" variant="subtle" to="/auth/oidc">
-      Log Masuk dengan Daun
-    </UButton>
+    <UButton
+      icon="i-lucide-log-in"
+      color="neutral"
+      variant="subtle"
+      label="Log Masuk"
+      @click="authFormModal.open()"
+    />
 
     <template #content>
       <UAlert

@@ -1,3 +1,6 @@
+import { db } from "#server/db";
+import { usersTable } from "#server/db/schema";
+
 const config = useRuntimeConfig();
 
 export default defineOAuthOidcEventHandler({
@@ -14,17 +17,21 @@ export default defineOAuthOidcEventHandler({
     });
 
     const $fetchDaunApi = await fetchDaunApi(event);
-    const { data: user } = await $fetchDaunApi<GetCurrentUserResponse>("/me");
+    const { data } = await $fetchDaunApi<GetCurrentUserResponse>("/me");
 
-    await setUserSession(event, {
-      user: {
-        id: tokens.data.userId,
-        name: user.name,
-        image: user.image,
-        username: user.username,
-      },
+    const user = {
+      id: tokens.data.userId,
+      name: data.name,
+      image: data.image,
+      username: data.username,
+    };
+
+    await db.insert(usersTable).values({
+      ...user,
+      apiKey: tokens.data.apiKey,
     });
 
+    await setUserSession(event, { ...user });
     return sendRedirect(event, "/");
   },
   onError(event, error) {
